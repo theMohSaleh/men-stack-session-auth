@@ -4,6 +4,9 @@ const methodOverride = require("method-override");
 require("dotenv").config();
 require('./config/database')
 
+// Controllers 
+
+const authController = require("./controllers/auth.js");
 
 const app = express();
 
@@ -19,8 +22,15 @@ app.use(methodOverride("_method"));
 // Morgan for logging HTTP requests
 app.use(morgan('dev'));
 
+app.use("/auth", authController);
+
 app.listen(port, () => {
-  console.log(`The express app is ready on port ${port}!`);
+    console.log(`The express app is ready on port ${port}!`);
 });
 
 // ROUTES
+
+// GET /
+app.get("/", async (req, res) => {
+    res.render("index.ejs");
+});
