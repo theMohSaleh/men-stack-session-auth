@@ -14,7 +14,7 @@ const app = express();
 // Set the port from environment variable or default to 3000
 const port = process.env.PORT ? process.env.PORT : "3000";
 
-// MIDDLEWARE
+// Middleware
 
 // Middleware to parse URL-encoded data from forms
 app.use(express.urlencoded({ extended: false }));
@@ -36,9 +36,20 @@ app.listen(port, () => {
     console.log(`The express app is ready on port ${port}!`);
 });
 
-// ROUTES
+// Public Routes
 
 // GET /
 app.get("/", async (req, res) => {
     res.render("index.ejs", { user: req.session.user });
+});
+
+// Protected Routes
+
+app.get("/vip-lounge", (req, res) => {
+    if (req.session.user) {
+        res.send(`Welcome to the party ${req.session.user.username}.`);
+    } else {
+        res.sendStatus(404);
+        // res.send("Sorry, no guests allowed.");
+    }
 });
