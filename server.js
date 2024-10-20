@@ -3,6 +3,8 @@ const morgan = require("morgan");
 const methodOverride = require("method-override");
 const session = require('express-session');
 const MongoStore = require("connect-mongo");
+const AddUserToViews = require('./middleware/addUserToViews.js');
+const isSignedIn = require("./middleware/is-signed-in.js");
 require("dotenv").config();
 require('./config/database')
 
@@ -14,6 +16,10 @@ const app = express();
 
 // Set the port from environment variable or default to 3000
 const port = process.env.PORT ? process.env.PORT : "3000";
+
+app.listen(port, () => {
+    console.log(`The express app is ready on port ${port}!`);
+});
 
 // Middleware
 
@@ -36,18 +42,19 @@ app.use(
 
 app.use("/auth", authController);
 
-app.listen(port, () => {
-    console.log(`The express app is ready on port ${port}!`);
-});
+app.use(AddUserToViews);
+
 
 // Public Routes
 
 // GET /
 app.get("/", async (req, res) => {
-    res.render("index.ejs", { user: req.session.user });
+    res.render("index.ejs");
 });
 
 // Protected Routes
+
+app.use(isSignedIn);
 
 app.get("/vip-lounge", (req, res) => {
     if (req.session.user) {

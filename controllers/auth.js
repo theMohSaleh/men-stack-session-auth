@@ -35,8 +35,15 @@ router.post('/sign-up', async (req, res) => {
     const payload = { username, password: hashPassword }
     const newUser = await User.create(payload);
 
-    // respond back to the browser
-    res.send(`Thanks for signing up ${newUser.username}`);
+    // respond back to the browser with created user signed in
+    req.session.user = {
+        username: newUser.username,
+    }
+
+    // send user back to home page
+    req.session.save(() => {
+        res.redirect("/");
+    });
 })
 
 // Sign in page
