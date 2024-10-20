@@ -70,13 +70,16 @@ router.post('/sign-in', async (req, res) => {
     }
 
     // send user back to home page
-    res.redirect('/');
+    req.session.save(() => {
+        res.redirect("/");
+    });
 })
 
 // Sign out 
 router.get('/sign-out', async (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
+    req.session.destroy(() => {
+        res.redirect('/');
+    });
 })
 
 module.exports = router;
